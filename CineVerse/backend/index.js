@@ -22,16 +22,27 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ✅ Vercel-friendly CORS configuration
+const allowedOrigins = [
+  "http://localhost:3000",                // local dev
+  "https://cineverse-4.onrender.com",     // Render frontend
+  "https://cineverse-4.vercel.app"        // Vercel frontend (if deployed here too)
+];
+
 const corsOptions = {
-  origin:
-    process.env.NODE_ENV === "production"
-      ? process.env.FRONTEND_URL || "https://cineverse-4.onrender.com"
-      : "http://localhost:3000",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("❌ Not allowed by CORS: " + origin));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 };
+
 app.use(cors(corsOptions));
+
 
 // Handle preflight requests
 app.options("*", cors());
