@@ -25,7 +25,7 @@ app.use(cookieParser());
 const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
-      ? process.env.FRONTEND_URL || "https://your-vercel-frontend-url.vercel.app"
+      ? process.env.FRONTEND_URL || "https://cineverse-4.onrender.com"
       : "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
