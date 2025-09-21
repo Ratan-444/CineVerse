@@ -7,9 +7,7 @@ import userRoute from "./routes/userRoute.js";
 import cors from "cors";
 
 // Load environment variables
-dotenv.config({
-  path: ".env"
-});
+dotenv.config();
 
 // Initialize DB (serverless-friendly)
 if (!global.dbConnection) {
@@ -23,20 +21,25 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// CORS configuration
+// ✅ Vercel-friendly CORS configuration
 const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
-      ? "https://your-vercel-frontend-url.vercel.app" // replace with your frontend URL
+      ? process.env.FRONTEND_URL || "https://your-vercel-frontend-url.vercel.app"
       : "http://localhost:3000",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 };
 app.use(cors(corsOptions));
 
+// Handle preflight requests
+app.options("*", cors());
+
 // API Routes
 app.use("/api/v1/user", userRoute);
 
-// Root route (optional)
+// Root route
 app.get("/", (req, res) => {
   res.send("✅ User Backend Running on Vercel 🚀");
 });
